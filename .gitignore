@@ -1,0 +1,6 @@
+
+# visual studio
+.vs/
+_bin/
+_int/
+*.vcxproj.user
