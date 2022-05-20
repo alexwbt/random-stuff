@@ -31,6 +31,14 @@ class Clock {
   }
 
   /**
+   * Update method
+   * @param {number} deltaTime delta time between last update and now in milliseconds.
+   */
+  update(deltaTime) {
+    this.time = new Date(this.time.getTime() + deltaTime);
+  }
+
+  /**
    * Renders the clock on a canvas
    * @param {CanvasRenderingContext2D} ctx canvas 2d rendering context
    */
@@ -86,9 +94,13 @@ class Clock {
       ctx.stroke();
     }
 
-    // render second hand.
+    // time
     const milliseconds = this.time.getMilliseconds();
     const seconds = this.time.getSeconds() + milliseconds / 1000;
+    const minutes = this.time.getMinutes() + seconds / D;
+    const hours = this.time.getHours() + minutes / D;
+
+    // render second hand.
     (() => {
       ctx.strokeStyle = this.armColors[0];
       ctx.lineWidth = this.radius * (1 - this.bodySize) * 0.3;
@@ -104,7 +116,6 @@ class Clock {
     })();
 
     // render minute hand.
-    const minutes = this.time.getMinutes() + seconds / D;
     (() => {
       ctx.strokeStyle = this.armColors[1];
       ctx.lineWidth = this.radius * (1 - this.bodySize) * 0.5;
@@ -120,7 +131,6 @@ class Clock {
     })();
 
     // render hour hand.
-    const hours = this.time.getHours() + minutes / D;
     (() => {
       ctx.strokeStyle = this.armColors[2];
       ctx.lineWidth = this.radius * (1 - this.bodySize) * 0.6;

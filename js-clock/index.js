@@ -5,6 +5,7 @@ const ctx = canvas.getContext('2d');
 // clock
 const clock = new Clock();
 
+let startTime = Date.now();
 const loop = () => {
 
   /* update */
@@ -16,7 +17,8 @@ const loop = () => {
   clock.y = canvas.height / 2;
   clock.radius = Math.min(canvas.width, canvas.height) * 0.4;
 
-  clock.time = new Date();
+  clock.update(Date.now() - startTime);
+  startTime = Date.now();
 
   /* render */
 
