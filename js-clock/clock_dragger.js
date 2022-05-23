@@ -16,14 +16,25 @@ class DraggableClock extends Clock {
       super.update();
   }
 
-  mouseMove() {
-
+  /**
+   * handle mouse move
+   * @param {number} x
+   * @param {number} y
+   */
+  mouseMove(x, y) {
+    
   }
 
+  /**
+   * handle mouse down
+   */
   mouseDown() {
 
   }
 
+  /**
+   * handle mouse up
+   */
   mouseUp() {
 
   }
