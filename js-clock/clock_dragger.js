@@ -124,16 +124,27 @@ class DraggableClock extends Clock {
   mouseMove(x, y) {
     // update time according to mouse movement when dragging
     if (this.dragging) {
-      const radians = Math.atan2(x - this.x, y - this.y) * 180 / Math.PI;
+      const radians = Math.atan2(this.x - x, y - this.y);
       const armRadians = [
         () => this.getSecondHandRadians(),
         () => this.getMinuteHandRadians(),
         () => this.getHourHandRadians(),
-      ][this.dragging - 1]() * 180 / Math.PI;
+      ][this.dragging - 1]();
 
-      const diffAngle = (radians - armRadians + 180) % 360 - 180;
-      const diffTime = (diffAngle / 360) * 1000;
-      this.time = new Date(this.time.getTime() + diffTime);
+      // find difference between two distance
+      const d = (radians + Math.PI) - armRadians;
+      const sign = d / Math.abs(d);
+      const phi = Math.abs(d) % (2 * Math.PI);
+      const flip = phi > Math.PI;
+      const distance = flip ? (2 * Math.PI) - phi : phi;
+
+      const factor = [60 * 1000, 60 * 60 * 1000, 60 * 60 * 12 * 1000][this.dragging - 1];
+      const diffTime = distance * factor / (2 * Math.PI);
+
+      console.log((radians + Math.PI), armRadians, d, phi, distance, diffTime);
+
+      // add time difference to this.time
+      this.time = new Date(this.time.getTime() + diffTime * sign * (flip ? -1 : 1));
     }
 
     this.mouseX = x;
