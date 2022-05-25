@@ -28,6 +28,8 @@ class Clock {
     this.textColor = 'black';
     /** The colors of the clock arms. @type {string[]}  */
     this.armColors = ['red', 'black', 'black'];
+    /** The ratio of the width of the arms to the clock frame in fraction @type {string[]}  */
+    this.armWidths = [0.3, 0.5, 0.6];
   }
 
   /**
@@ -59,6 +61,30 @@ class Clock {
   }
 
   /**
+   * Returns the radians of the second hand.
+   * @returns {number}
+   */
+  getSecondHandRadians() {
+    return 2 * Math.PI * this.getSeconds() / 60;
+  }
+
+  /**
+   * Returns the radians of the minute hand.
+   * @returns {number}
+   */
+  getMinuteHandRadians() {
+    return 2 * Math.PI * this.getMinutes() / 60;
+  }
+
+  /**
+   * Returns the radians of the hour hand.
+   * @returns {number}
+   */
+  getHourHandRadians() {
+    return 2 * Math.PI * this.getHours() / 12;
+  }
+
+  /**
    * @returns {{
    *    x1: number;
    *    y1: number;
@@ -67,7 +93,7 @@ class Clock {
    * }} A line representing the second hand.
    */
   getSecondHandPath() {
-    const radians = 2 * Math.PI * this.getSeconds() / 60;
+    const radians = this.getSecondHandRadians();
     const x2 = this.x + Math.sin(radians) * this.radius * 0.8;
     const y2 = this.y + Math.cos(radians) * -this.radius * 0.8;
     return { x1: this.x, y1: this.y, x2, y2 };
@@ -82,7 +108,7 @@ class Clock {
    * }} A line representing the minute hand.
    */
   getMinuteHandPath() {
-    const radians = 2 * Math.PI * this.getMinutes() / 60;
+    const radians = this.getMinuteHandRadians();
     const x2 = this.x + Math.sin(radians) * this.radius * 0.8;
     const y2 = this.y + Math.cos(radians) * -this.radius * 0.8;
     return { x1: this.x, y1: this.y, x2, y2 };
@@ -97,7 +123,7 @@ class Clock {
    * }} A line representing the hour hand.
    */
   getHourHandPath() {
-    const radians = 2 * Math.PI * this.getHours() / 12;
+    const radians = this.getHourHandRadians();
     const x2 = this.x + Math.sin(radians) * this.radius * 0.5;
     const y2 = this.y + Math.cos(radians) * -this.radius * 0.5;
     return { x1: this.x, y1: this.y, x2, y2 };
@@ -166,36 +192,22 @@ class Clock {
       ctx.stroke();
     }
 
-    /**
-     * @param {{
-     *    x1: number;
-     *    y1: number;
-     *    x2: number;
-     *    y2: number;
-     * }} line
-     */
-    const drawLine = line => {
+    // render clock arms
+    const clockArmPaths = [
+      this.getSecondHandPath(),
+      this.getMinuteHandPath(),
+      this.getHourHandPath(),
+    ];
+    for (let i = 0; i < 3; i++) {
+      ctx.strokeStyle = this.armColors[i];
+      ctx.lineWidth = this.radius * (1 - this.bodySize) * this.armWidths[i];
+      const line = clockArmPaths[i];
       ctx.beginPath();
       ctx.moveTo(line.x1, line.y1);
       ctx.lineTo(line.x2, line.y2);
       ctx.closePath();
       ctx.stroke();
-    };
-
-    // render second hand.
-    ctx.strokeStyle = this.armColors[0];
-    ctx.lineWidth = this.radius * (1 - this.bodySize) * 0.3;
-    drawLine(this.getSecondHandPath());
-
-    // render minute hand.
-    ctx.strokeStyle = this.armColors[1];
-    ctx.lineWidth = this.radius * (1 - this.bodySize) * 0.5;
-    drawLine(this.getMinuteHandPath());
-
-    // render hour hand.
-    ctx.strokeStyle = this.armColors[2];
-    ctx.lineWidth = this.radius * (1 - this.bodySize) * 0.6;
-    drawLine(this.getHourHandPath());
+    }
 
     // render circle in the middle of the clock.
     ctx.fillStyle = this.textColor;

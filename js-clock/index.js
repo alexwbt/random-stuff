@@ -3,7 +3,17 @@ const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
 
 // clock
-const clock = new Clock();
+const clock = new DraggableClock(canvas);
+
+canvas.addEventListener('mousemove', e => {
+  clock.mouseMove(e.x, e.y);
+});
+canvas.addEventListener('mousedown', () => {
+  clock.mouseDown();
+});
+canvas.addEventListener('mouseup', () => {
+  clock.mouseUp();
+});
 
 let startTime = Date.now();
 const loop = () => {
